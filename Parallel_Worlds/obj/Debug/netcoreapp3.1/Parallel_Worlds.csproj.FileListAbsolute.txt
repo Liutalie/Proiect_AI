@@ -1,0 +1,16 @@
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\bin\Debug\netcoreapp3.1\Parallel_Worlds.exe
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\bin\Debug\netcoreapp3.1\Parallel_Worlds.deps.json
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\bin\Debug\netcoreapp3.1\Parallel_Worlds.runtimeconfig.json
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\bin\Debug\netcoreapp3.1\Parallel_Worlds.runtimeconfig.dev.json
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\bin\Debug\netcoreapp3.1\Parallel_Worlds.dll
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\bin\Debug\netcoreapp3.1\Parallel_Worlds.pdb
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\obj\Debug\netcoreapp3.1\Parallel_Worlds.csprojAssemblyReference.cache
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\obj\Debug\netcoreapp3.1\Parallel_Worlds.Form1.resources
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\obj\Debug\netcoreapp3.1\Parallel_Worlds.Properties.Resources.resources
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\obj\Debug\netcoreapp3.1\Parallel_Worlds.csproj.GenerateResource.cache
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\obj\Debug\netcoreapp3.1\Parallel_Worlds.AssemblyInfoInputs.cache
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\obj\Debug\netcoreapp3.1\Parallel_Worlds.AssemblyInfo.cs
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\obj\Debug\netcoreapp3.1\Parallel_Worlds.csproj.CoreCompileInputs.cache
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\obj\Debug\netcoreapp3.1\Parallel_Worlds.dll
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\obj\Debug\netcoreapp3.1\Parallel_Worlds.pdb
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\obj\Debug\netcoreapp3.1\Parallel_Worlds.genruntimeconfig.cache
