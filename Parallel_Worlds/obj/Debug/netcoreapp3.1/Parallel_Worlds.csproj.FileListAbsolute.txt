@@ -14,3 +14,4 @@ D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\obj\Debug\netcor
 D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\obj\Debug\netcoreapp3.1\Parallel_Worlds.dll
 D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\obj\Debug\netcoreapp3.1\Parallel_Worlds.pdb
 D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\obj\Debug\netcoreapp3.1\Parallel_Worlds.genruntimeconfig.cache
+D:\ProgrameFacultate\Proiect_AI\Parallel_Worlds\Parallel_Worlds\obj\Debug\netcoreapp3.1\Parallel_Worlds.Promovation.resources

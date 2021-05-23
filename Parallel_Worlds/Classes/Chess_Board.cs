@@ -33,6 +33,7 @@ namespace Parallel_Worlds
                         board_cells[row][column].Visible = true;
                         board_cells[row][column].BackColor = Color.Transparent;
                         board_cells[row][column].piece = null;
+                        chess_board.Controls.Add(board_cells[row][column]);
                     }
                 }
             }
@@ -129,6 +130,7 @@ namespace Parallel_Worlds
                     }
                 }
             }
+
         }
     }
 }

@@ -17,6 +17,8 @@ namespace Parallel_Worlds
         Label turn_to_move = new Label(); // Label that shows who's turn is to move
         int old_row = 0;
         int old_column = 0;
+        int board_number_clicked;
+        bool board_selected = false;
         public Form1()
         {
             InitializeComponent();
@@ -52,10 +54,12 @@ namespace Parallel_Worlds
         private void Form1_Load(object sender, EventArgs e)
         {
 
-            Controls.Add(game.board[0].chess_board);
-            Controls.Add(game.board[1].chess_board);
-            Controls.Add(game.board[2].chess_board);
-            Click(game.GetPieceLocation(Game_Logic.who_moves), true);
+            Controls.Add(Game_Logic.board[0].chess_board);
+            Controls.Add(Game_Logic.board[1].chess_board);
+            Controls.Add(Game_Logic.board[2].chess_board);
+            Click(game.GetPieceLocation(Game_Logic.who_moves, 0), true, 0); // Enable clicking the white pices in the beginning
+            Click(game.GetPieceLocation(Game_Logic.who_moves, 1), true, 1);
+            Click(game.GetPieceLocation(Game_Logic.who_moves, 2), true, 2);
         }
 
         private void InitializeLabel()
@@ -75,14 +79,18 @@ namespace Parallel_Worlds
 
         private void Board1PickOrDropPiece(object sender, EventArgs e)
         {
-
             Cell cell_selected = (Cell)sender; // Get selected cell
+            if (!board_selected)
+            {
+                board_number_clicked = cell_selected.piece.board;
+                board_selected = true;
+            }
             //var piece_selected = Game_Logic.selected_piece; // Get selected piece
             for (int row = 0; row < 8; row++)
             {
                 for (int column = 0; column < 8; column++) // Iterate through chess board
                 {
-                    if (game.board[0].board_cells[row][column].Equals(sender)) // If the cell clicked is found
+                    if (Game_Logic.board[board_number_clicked].board_cells[row][column].Equals(sender)) // If the cell clicked is found
                     {
                         if (!game.piece_clicked) // If there are no pieces selected
                         {
@@ -91,14 +99,18 @@ namespace Parallel_Worlds
                                 DeleteBorder();
                                 cell_selected.piece.row = row; // Get the row
                                 cell_selected.piece.column = column; // Get the column
-                                game.board[0].board_cells[cell_selected.piece.row][cell_selected.piece.column].BorderStyle = BorderStyle.Fixed3D; // Highlight the cell
-                                cell_selected.piece.ShowAvailableMoves(game.board[0]); // Shows all possible moves for a piece
+                                Game_Logic.board[board_number_clicked].board_cells[cell_selected.piece.row][cell_selected.piece.column].BorderStyle = BorderStyle.Fixed3D; // Highlight the cell
+                                cell_selected.piece.ShowAvailableMoves(Game_Logic.board[board_number_clicked]); // Shows all possible moves for a piece
                                 game.piece_clicked = true; // Set flag to true, indicates the is a selected piece
-                                Click(game.GetPieceLocation(Game_Logic.who_moves), false); // Stop allowing to select other pieces
-                                Click(cell_selected.piece.available_moves, true);
-                                game.board[0].board_cells[row][column].Click -= Board1PickOrDropPiece;
+                                Click(game.GetPieceLocation(Game_Logic.who_moves, 0), false, 0); // Stop allowing to select other pieces on board 0
+                                Click(game.GetPieceLocation(Game_Logic.who_moves, 1), false, 1); // Stop allowing to select other pieces on board 1
+                                Click(game.GetPieceLocation(Game_Logic.who_moves, 2), false, 2); // Stop allowing to select other pieces on board 2
+                                Click(cell_selected.piece.available_moves, true, 0); // Allow selection only of valid moves on board 0
+                                Click(cell_selected.piece.available_moves, true, 1); // Allow selection only of valid moves on board 1
+                                Click(cell_selected.piece.available_moves, true, 2); // Allow selection only of valid moves on board 2
+                                Game_Logic.board[board_number_clicked].board_cells[row][column].Click -= Board1PickOrDropPiece;
                                 old_row = cell_selected.piece.row; // Saving old coordonates 
-                                old_column = cell_selected.piece.column;
+                                old_column = cell_selected.piece.column;                               
                             }
                         }
                         else
@@ -106,29 +118,57 @@ namespace Parallel_Worlds
                             List<Tuple<int, int>> moved_piece_list = new List<Tuple<int, int>>();
                             Tuple<int, int> moved_piece_tuple = new Tuple<int, int>(row, column);
                             moved_piece_list.Add(moved_piece_tuple);
-                            game.MoveThePiece(0, old_row, old_column, row, column);
+                            game.MoveThePiece(board_number_clicked, old_row, old_column, row, column);
                             game.piece_clicked = false;
                             DeleteBorder();
-                            Click(cell_selected.piece.available_moves, false);
-                            Click(moved_piece_list, false);
-                            if (Game_Logic.who_moves == Piece_Color.white)
+                            Click(cell_selected.piece.available_moves, false, 0);
+                            Click(cell_selected.piece.available_moves, false, 1);
+                            Click(cell_selected.piece.available_moves, false, 2);
+                            Click(moved_piece_list, false, board_number_clicked);
+                            game.number_of_moves++;
+                            if (game.beginng_match)
                             {
-                                Game_Logic.who_moves = Piece_Color.black;
+                                if (Game_Logic.who_moves == Piece_Color.white && game.number_of_moves == 2)
+                                {
+                                    Game_Logic.who_moves = Piece_Color.black;
+                                    game.beginng_match = false;
+                                }
+                                else if(Game_Logic.who_moves == Piece_Color.black && game.number_of_moves == 3)
+                                {
+                                    Game_Logic.who_moves = Piece_Color.white;
+                                }
+                                if(game.number_of_moves == 2)
+                                {
+                                    game.number_of_moves = 0;
+                                }
                             }
                             else
                             {
-                                Game_Logic.who_moves = Piece_Color.white;
+                                if (Game_Logic.who_moves == Piece_Color.white && game.number_of_moves == 3)
+                                {
+                                    Game_Logic.who_moves = Piece_Color.black;
+                                }
+                                else if(Game_Logic.who_moves == Piece_Color.black && game.number_of_moves == 3)
+                                {
+                                    Game_Logic.who_moves = Piece_Color.white;
+                                }
+                                if(game.number_of_moves == 3)
+                                {
+                                    game.number_of_moves = 0;
+                                }
                             }
                             UpdateTurn();
-                            Click(game.GetPieceLocation(Game_Logic.who_moves), true);
+                            Click(game.GetPieceLocation(Game_Logic.who_moves, 0), true, 0);
+                            Click(game.GetPieceLocation(Game_Logic.who_moves, 1), true, 1);
+                            Click(game.GetPieceLocation(Game_Logic.who_moves, 2), true, 2);
+                            board_selected = false;
                         }
                     }
-
                 }
             }
         }
 
-        private void Click(List<Tuple<int, int>> return_location, bool is_enabled)
+        private void Click(List<Tuple<int, int>> return_location, bool is_enabled, int board_number)
         {
             foreach (var item in return_location)
             {
@@ -136,11 +176,11 @@ namespace Parallel_Worlds
                 int column = item.Item2;
                 if (is_enabled)
                 {
-                    game.board[0].board_cells[row][column].Click += Board1PickOrDropPiece;
+                    Game_Logic.board[board_number].board_cells[row][column].Click += Board1PickOrDropPiece;
                 }
                 else
                 {
-                    game.board[0].board_cells[row][column].Click -= Board1PickOrDropPiece;
+                    Game_Logic.board[board_number].board_cells[row][column].Click -= Board1PickOrDropPiece;
                 }
             }
         }
@@ -151,9 +191,9 @@ namespace Parallel_Worlds
             {
                 for (int column = 0; column < 8; column++)
                 {
-                    game.board[0].board_cells[row][column].BorderStyle = BorderStyle.None;
-                    game.board[1].board_cells[row][column].BorderStyle = BorderStyle.None;
-                    game.board[2].board_cells[row][column].BorderStyle = BorderStyle.None;
+                    Game_Logic.board[0].board_cells[row][column].BorderStyle = BorderStyle.None; // Deleting borders of available moves
+                    Game_Logic.board[1].board_cells[row][column].BorderStyle = BorderStyle.None;
+                    Game_Logic.board[2].board_cells[row][column].BorderStyle = BorderStyle.None;
                 }
             }
         }
