@@ -7,7 +7,7 @@ namespace Parallel_Worlds
     class Game_Logic
     {
         public Chess_Board[] board;
-        public Piece_Color who_moves;
+        static public Piece_Color who_moves;
         public static Piece selected_piece;
         public bool piece_clicked;
 
@@ -52,29 +52,6 @@ namespace Parallel_Worlds
                 }
             }
             return return_location; // Return pieces coordonates
-        }
-
-        public List<Tuple<int,int>> GetNonColorLocation(Piece_Color color)
-        {
-            List<Tuple<int, int>> return_location = new List<Tuple<int, int>>(); // Make a local list 
-            for (int row = 0; row < 8; row++)
-            {
-                for (int column = 0; column < 8; column++) // Iterating through the board
-                {
-                    if (board[0].board_cells[row][column].IsPiece()) // If there is a piece
-                    {
-                        if (board[0].board_cells[row][column].piece.piece_color != color) // If the color matches
-                        {
-                            return_location.Add(new Tuple<int, int>(row, column)); // Add its coordonates into the list 
-                        }
-                    }
-                    else
-                    {
-                        return_location.Add(new Tuple<int, int>(row, column));
-                    }
-                }
-            }
-            return return_location;
         }
     }
 }

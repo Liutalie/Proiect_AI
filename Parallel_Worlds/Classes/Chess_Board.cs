@@ -9,8 +9,7 @@ namespace Parallel_Worlds
     class Chess_Board
     {
         public Panel chess_board;
-        public Cell[][] board_cells;
-        //public 
+        public Cell[][] board_cells; 
 
         public Chess_Board(int board_number)
         {

@@ -17,7 +17,6 @@ namespace Parallel_Worlds
         Label turn_to_move = new Label(); // Label that shows who's turn is to move
         int old_row = 0;
         int old_column = 0;
-        private Piece CurrentPiece { get; set; }
         public Form1()
         {
             InitializeComponent();
@@ -56,13 +55,13 @@ namespace Parallel_Worlds
             Controls.Add(game.board[0].chess_board);
             Controls.Add(game.board[1].chess_board);
             Controls.Add(game.board[2].chess_board);
-            Click(game.GetPieceLocation(game.who_moves), true);
+            Click(game.GetPieceLocation(Game_Logic.who_moves), true);
         }
 
         private void InitializeLabel()
         {
             turn_to_move.Location = new Point(530, 200);
-            turn_to_move.Text = game.who_moves.ToString();
+            turn_to_move.Text = Game_Logic.who_moves.ToString();
             turn_to_move.Visible = true;
             turn_to_move.TextAlign = ContentAlignment.MiddleCenter;
             turn_to_move.Font = new Font(turn_to_move.Font.Name, 14);
@@ -71,21 +70,21 @@ namespace Parallel_Worlds
 
         public void UpdateTurn()
         {
-            turn_to_move.Text = game.who_moves.ToString();
+            turn_to_move.Text = Game_Logic.who_moves.ToString();
         }
 
         private void Board1PickOrDropPiece(object sender, EventArgs e)
         {
-            
+
             Cell cell_selected = (Cell)sender; // Get selected cell
             //var piece_selected = Game_Logic.selected_piece; // Get selected piece
             for (int row = 0; row < 8; row++)
             {
-                for(int column = 0; column < 8; column++) // Iterate through chess board
+                for (int column = 0; column < 8; column++) // Iterate through chess board
                 {
-                    if(game.board[0].board_cells[row][column].Equals(sender)) // If the cell clicked is found
+                    if (game.board[0].board_cells[row][column].Equals(sender)) // If the cell clicked is found
                     {
-                        if(!game.piece_clicked) // If there are no pieces selected
+                        if (!game.piece_clicked) // If there are no pieces selected
                         {
                             if (cell_selected.IsPiece()) // If there is a piece in the selected cell
                             {
@@ -95,9 +94,9 @@ namespace Parallel_Worlds
                                 game.board[0].board_cells[cell_selected.piece.row][cell_selected.piece.column].BorderStyle = BorderStyle.Fixed3D; // Highlight the cell
                                 cell_selected.piece.ShowAvailableMoves(game.board[0]); // Shows all possible moves for a piece
                                 game.piece_clicked = true; // Set flag to true, indicates the is a selected piece
-                                Click(game.GetPieceLocation(game.who_moves), false); // Stop allowing to select other pieces
-                                Click(game.GetNonColorLocation(game.who_moves), true); // Allow empty spaces and enemy pieces to be selected
-                                game.board[0].board_cells[row][column].Click -= Board1PickOrDropPiece; 
+                                Click(game.GetPieceLocation(Game_Logic.who_moves), false); // Stop allowing to select other pieces
+                                Click(cell_selected.piece.available_moves, true);
+                                game.board[0].board_cells[row][column].Click -= Board1PickOrDropPiece;
                                 old_row = cell_selected.piece.row; // Saving old coordonates 
                                 old_column = cell_selected.piece.column;
                             }
@@ -105,31 +104,31 @@ namespace Parallel_Worlds
                         else
                         {
                             List<Tuple<int, int>> moved_piece_list = new List<Tuple<int, int>>();
-                            Tuple<int, int> moved_piece_tuple = new Tuple<int, int>(row,column);
+                            Tuple<int, int> moved_piece_tuple = new Tuple<int, int>(row, column);
                             moved_piece_list.Add(moved_piece_tuple);
                             game.MoveThePiece(0, old_row, old_column, row, column);
                             game.piece_clicked = false;
                             DeleteBorder();
-                            Click(game.GetNonColorLocation(game.who_moves), false);
+                            Click(cell_selected.piece.available_moves, false);
                             Click(moved_piece_list, false);
-                            if (game.who_moves == Piece_Color.white)
+                            if (Game_Logic.who_moves == Piece_Color.white)
                             {
-                                game.who_moves = Piece_Color.black;
+                                Game_Logic.who_moves = Piece_Color.black;
                             }
                             else
                             {
-                                game.who_moves = Piece_Color.white;
+                                Game_Logic.who_moves = Piece_Color.white;
                             }
                             UpdateTurn();
-                            Click(game.GetPieceLocation(game.who_moves), true);
+                            Click(game.GetPieceLocation(Game_Logic.who_moves), true);
                         }
                     }
-                    
+
                 }
             }
         }
 
-        private void Click( List<Tuple<int, int>> return_location, bool is_enabled)
+        private void Click(List<Tuple<int, int>> return_location, bool is_enabled)
         {
             foreach (var item in return_location)
             {
@@ -148,9 +147,9 @@ namespace Parallel_Worlds
 
         public void DeleteBorder()
         {
-            for(int row = 0; row < 8; row++)
+            for (int row = 0; row < 8; row++)
             {
-                for(int column = 0; column < 8; column++)
+                for (int column = 0; column < 8; column++)
                 {
                     game.board[0].board_cells[row][column].BorderStyle = BorderStyle.None;
                     game.board[1].board_cells[row][column].BorderStyle = BorderStyle.None;

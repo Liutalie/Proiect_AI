@@ -57,16 +57,16 @@ namespace Parallel_Worlds
                     {
                         available_moves.Add(new Tuple<int, int>(row - 2, column));
                     }
-                    if (chess_board.board_cells[row - 1][column + 1].IsPiece() && column != 7) // If pawn can capture and is not on the right edge
+                    if (column != 7 && chess_board.board_cells[row - 1][column + 1].IsPiece()) // If pawn can capture and is not on the right edge
                     {
-                        if (chess_board.board_cells[row - 1][column + 1].piece.piece_color.Equals(Piece_Color.black)) // If upper right square contains black piece
+                        if (chess_board.board_cells[row - 1][column + 1].piece.piece_color != Game_Logic.who_moves) // If upper right square contains black piece
                         {
                             available_moves.Add(new Tuple<int, int>(row - 1, column + 1));
                         }
                     }
-                    if (chess_board.board_cells[row - 1][column - 1].IsPiece() && column != 0) // If upper left square contains black piece
+                    if (column != 0 && chess_board.board_cells[row - 1][column - 1].IsPiece()) // If upper left square contains black piece
                     {
-                        if (chess_board.board_cells[row - 1][column - 1].piece.piece_color.Equals(Piece_Color.black))
+                        if (chess_board.board_cells[row - 1][column - 1].piece.piece_color != Game_Logic.who_moves)
                         {
                             available_moves.Add(new Tuple<int, int>(row - 1, column - 1));
                         }
@@ -82,24 +82,411 @@ namespace Parallel_Worlds
                     {
                         available_moves.Add(new Tuple<int, int>(row + 2, column));
                     }
-                    if (chess_board.board_cells[row + 1][column - 1].IsPiece() && column != 0)
+                    if (column != 0 && chess_board.board_cells[row + 1][column - 1].IsPiece())
                     {
-                        if (chess_board.board_cells[row + 1][column - 1].piece.piece_color.Equals(Piece_Color.white))
+                        if (chess_board.board_cells[row + 1][column - 1].piece.piece_color != Game_Logic.who_moves)
                         {
                             available_moves.Add(new Tuple<int, int>(row + 1, column - 1));
                         }
                     }
-                    if(chess_board.board_cells[row+1][column+1].IsPiece() && column != 7)
+                    if (column != 7 && chess_board.board_cells[row + 1][column + 1].IsPiece())
                     {
-                        if (chess_board.board_cells[row + 1][column + 1].piece.piece_color.Equals(Piece_Color.white))
+                        if (chess_board.board_cells[row + 1][column + 1].piece.piece_color != Game_Logic.who_moves)
                         {
                             available_moves.Add(new Tuple<int, int>(row + 1, column + 1));
                         }
                     }
                 }
-                // End of pawn moves
 
-                // Rook moves
+            }
+            // End of pawn moves
+
+            // Rook moves
+            if (piece_type.Equals(Piece_Type.rook))
+            {
+                // South available moves
+                int temporary = row + 1;
+                while (temporary < 8)
+                {
+                    if (!chess_board.board_cells[temporary][column].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(temporary, column));
+                        temporary++;
+                    }
+                    else
+                    {
+                        if (chess_board.board_cells[temporary][column].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(temporary, column));
+                        }
+                        break;
+                    }
+                }
+
+                // North available moves
+                temporary = row - 1;
+                while (temporary >= 0)
+                {
+                    if (!chess_board.board_cells[temporary][column].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(temporary, column));
+                        temporary--;
+                    }
+                    else
+                    {
+                        if (chess_board.board_cells[temporary][column].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(temporary, column));
+                        }
+                        break;
+                    }
+                }
+
+                // East available moves
+                temporary = column + 1;
+                while (temporary < 8)
+                {
+                    if (!chess_board.board_cells[row][temporary].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(row, temporary));
+                        temporary++;
+                    }
+                    else
+                    {
+                        if (chess_board.board_cells[row][temporary].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(row, temporary));
+                        }
+                        break;
+                    }
+                }
+
+                // West available moves
+                temporary = column - 1;
+                while (temporary >= 0)
+                {
+                    if (!chess_board.board_cells[row][temporary].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(row, temporary));
+                        temporary--;
+                    }
+                    else
+                    {
+                        if (chess_board.board_cells[row][temporary].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(row, temporary));
+                        }
+                        break;
+                    }
+                }
+            }
+            // End of rook
+
+            // Knight moves
+            if (piece_type.Equals(Piece_Type.knight))
+            {
+                int[] x = { 2, 1, -1, -2, -2, -1, 1, 2 };
+                int[] y = { 1, 2, 2, 1, -1, -2, -2, -1 };
+                for (int index = 0; index < 8; index++)
+                {
+                    int new_row = row + x[index];
+                    int new_column = column + y[index];
+                    if (new_row >= 0 && new_column < 8 && new_row < 8 && new_column >= 0)
+                    {
+                        if (!chess_board.board_cells[new_row][new_column].IsPiece())
+                        {
+                            available_moves.Add(new Tuple<int, int>(new_row, new_column));
+                        }
+                        else
+                        {
+                            if (chess_board.board_cells[new_row][new_column].piece.piece_color != Game_Logic.who_moves)
+                            {
+                                available_moves.Add(new Tuple<int, int>(new_row, new_column));
+                            }
+                        }
+                    }
+                }
+            }
+            // End of Knight
+
+            // Bishop moves
+            if (piece_type.Equals(Piece_Type.bishop))
+            {
+                // South East moves
+                int temporary_row = row - 1;
+                int temporary_column = column + 1;
+                while (temporary_row >= 0 && temporary_column < 8)
+                {
+                    if (!chess_board.board_cells[temporary_row][temporary_column].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        temporary_row--;
+                        temporary_column++;
+                    }
+                    else
+                    {
+                        if (chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        }
+                        break;
+                    }
+                }
+
+                // South West moves
+                temporary_row = row - 1;
+                temporary_column = column - 1;
+                while (temporary_row >= 0 && temporary_column >= 0)
+                {
+                    if(!chess_board.board_cells[temporary_row][temporary_column].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        temporary_row--;
+                        temporary_column--;
+                    }
+                    else
+                    {
+                        if(chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        }
+                        break;
+                    }
+                }
+
+                // North East moves
+                temporary_row = row + 1;
+                temporary_column = column + 1;
+                while(temporary_row < 8 && temporary_column < 8)
+                {
+                    if(!chess_board.board_cells[temporary_row][temporary_column].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        temporary_row++;
+                        temporary_column++;
+                    }
+                    else
+                    {
+                        if(chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        }
+                        break;
+                    }
+                }
+
+                // North West moves
+                temporary_row = row + 1;
+                temporary_column = column - 1;
+                while(temporary_row < 8 && temporary_column >= 0)
+                {
+                    if(!chess_board.board_cells[temporary_row][temporary_column].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        temporary_row++;
+                        temporary_column--;
+                    }
+                    else
+                    {
+                        if(chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        }
+                        break;
+                    }
+                }
+            }
+            //End of Bishop
+
+            // Queen moves
+            if(piece_type.Equals(Piece_Type.queen))
+            {
+                // South East moves
+                int temporary_row = row - 1;
+                int temporary_column = column + 1;
+                while (temporary_row >= 0 && temporary_column < 8)
+                {
+                    if (!chess_board.board_cells[temporary_row][temporary_column].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        temporary_row--;
+                        temporary_column++;
+                    }
+                    else
+                    {
+                        if (chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        }
+                        break;
+                    }
+                }
+
+                // South West moves
+                temporary_row = row - 1;
+                temporary_column = column - 1;
+                while (temporary_row >= 0 && temporary_column >= 0)
+                {
+                    if (!chess_board.board_cells[temporary_row][temporary_column].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        temporary_row--;
+                        temporary_column--;
+                    }
+                    else
+                    {
+                        if (chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        }
+                        break;
+                    }
+                }
+
+                // North East moves
+                temporary_row = row + 1;
+                temporary_column = column + 1;
+                while (temporary_row < 8 && temporary_column < 8)
+                {
+                    if (!chess_board.board_cells[temporary_row][temporary_column].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        temporary_row++;
+                        temporary_column++;
+                    }
+                    else
+                    {
+                        if (chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        }
+                        break;
+                    }
+                }
+
+                // North West moves
+                temporary_row = row + 1;
+                temporary_column = column - 1;
+                while (temporary_row < 8 && temporary_column >= 0)
+                {
+                    if (!chess_board.board_cells[temporary_row][temporary_column].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        temporary_row++;
+                        temporary_column--;
+                    }
+                    else
+                    {
+                        if (chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                        }
+                        break;
+                    }
+                }
+
+                // South available moves
+                int temporary = row + 1;
+                while (temporary < 8)
+                {
+                    if (!chess_board.board_cells[temporary][column].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(temporary, column));
+                        temporary++;
+                    }
+                    else
+                    {
+                        if (chess_board.board_cells[temporary][column].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(temporary, column));
+                        }
+                        break;
+                    }
+                }
+
+                // North available moves
+                temporary = row - 1;
+                while (temporary >= 0)
+                {
+                    if (!chess_board.board_cells[temporary][column].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(temporary, column));
+                        temporary--;
+                    }
+                    else
+                    {
+                        if (chess_board.board_cells[temporary][column].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(temporary, column));
+                        }
+                        break;
+                    }
+                }
+
+                // East available moves
+                temporary = column + 1;
+                while (temporary < 8)
+                {
+                    if (!chess_board.board_cells[row][temporary].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(row, temporary));
+                        temporary++;
+                    }
+                    else
+                    {
+                        if (chess_board.board_cells[row][temporary].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(row, temporary));
+                        }
+                        break;
+                    }
+                }
+
+                // West available moves
+                temporary = column - 1;
+                while (temporary >= 0)
+                {
+                    if (!chess_board.board_cells[row][temporary].IsPiece())
+                    {
+                        available_moves.Add(new Tuple<int, int>(row, temporary));
+                        temporary--;
+                    }
+                    else
+                    {
+                        if (chess_board.board_cells[row][temporary].piece.piece_color != Game_Logic.who_moves)
+                        {
+                            available_moves.Add(new Tuple<int, int>(row, temporary));
+                        }
+                        break;
+                    }
+                }
+            }
+            // End of Queen
+
+            // King moves
+            if(piece_type.Equals(Piece_Type.king))
+            {
+                int[] x = { 1, 0, -1, 0, 1, -1, -1, 1 };
+                int[] y = { 0, 1, 0, -1, 1, 1, -1, -1 };
+                for (int index = 0; index < 8; index++)
+                {
+                    int new_row = row + x[index];
+                    int new_column = column + y[index];
+                    if (new_row >= 0 && new_column < 8 && new_row < 8 && new_column >= 0)
+                    {
+                        if (!chess_board.board_cells[new_row][new_column].IsPiece())
+                        {
+                            available_moves.Add(new Tuple<int, int>(new_row, new_column));
+                        }
+                        else
+                        {
+                            if (chess_board.board_cells[new_row][new_column].piece.piece_color != Game_Logic.who_moves)
+                            {
+                                available_moves.Add(new Tuple<int, int>(new_row, new_column));
+                            }
+                        }
+                    }
+                }
             }
             foreach (var cell_on_board in available_moves)
             {
