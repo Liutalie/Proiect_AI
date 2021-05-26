@@ -57,9 +57,9 @@ namespace Parallel_Worlds
             Controls.Add(Game_Logic.board[0].chess_board);
             Controls.Add(Game_Logic.board[1].chess_board);
             Controls.Add(Game_Logic.board[2].chess_board);
-            Click(game.GetPieceLocation(Game_Logic.who_moves, 0), true, 0); // Enable clicking the white pices in the beginning
-            Click(game.GetPieceLocation(Game_Logic.who_moves, 1), true, 1);
-            Click(game.GetPieceLocation(Game_Logic.who_moves, 2), true, 2);
+            _Click(game.GetPieceLocation(Game_Logic.who_moves, 0), true, 0); // Enable clicking the white pices in the beginning
+            _Click(game.GetPieceLocation(Game_Logic.who_moves, 1), true, 1);
+            _Click(game.GetPieceLocation(Game_Logic.who_moves, 2), true, 2);
         }
 
         private void InitializeLabel()
@@ -82,6 +82,7 @@ namespace Parallel_Worlds
             Cell cell_selected = (Cell)sender; // Get selected cell
             if (!board_selected)
             {
+                if(cell_selected.piece != null)
                 board_number_clicked = cell_selected.piece.board;
                 board_selected = true;
             }
@@ -100,17 +101,20 @@ namespace Parallel_Worlds
                                 cell_selected.piece.row = row; // Get the row
                                 cell_selected.piece.column = column; // Get the column
                                 Game_Logic.board[board_number_clicked].board_cells[cell_selected.piece.row][cell_selected.piece.column].BorderStyle = BorderStyle.Fixed3D; // Highlight the cell
-                                cell_selected.piece.ShowAvailableMoves(Game_Logic.board[board_number_clicked]); // Shows all possible moves for a piece
+                                cell_selected.piece.ShowAvailableMoves(Game_Logic.board[board_number_clicked], true); // Shows all possible moves for a piece
                                 game.piece_clicked = true; // Set flag to true, indicates the is a selected piece
-                                Click(game.GetPieceLocation(Game_Logic.who_moves, 0), false, 0); // Stop allowing to select other pieces on board 0
-                                Click(game.GetPieceLocation(Game_Logic.who_moves, 1), false, 1); // Stop allowing to select other pieces on board 1
-                                Click(game.GetPieceLocation(Game_Logic.who_moves, 2), false, 2); // Stop allowing to select other pieces on board 2
-                                Click(cell_selected.piece.available_moves, true, 0); // Allow selection only of valid moves on board 0
-                                Click(cell_selected.piece.available_moves, true, 1); // Allow selection only of valid moves on board 1
-                                Click(cell_selected.piece.available_moves, true, 2); // Allow selection only of valid moves on board 2
+                                _Click(game.GetPieceLocation(Game_Logic.who_moves, 0), false, board_number_clicked); // Stop allowing to select other pieces on board 0
+                                //_Click(game.GetPieceLocation(Game_Logic.who_moves, 1), false, 1); // Stop allowing to select other pieces on board 1
+                               // _Click(game.GetPieceLocation(Game_Logic.who_moves, 2), false, 2); // Stop allowing to select other pieces on board 2
+                                if (cell_selected.piece != null)
+                                {
+                                    _Click(cell_selected.piece.available_moves, true, board_number_clicked); // Allow selection only of valid moves on board 0
+                                    //_Click(cell_selected.piece.available_moves, true, 1); // Allow selection only of valid moves on board 1
+                                   // _Click(cell_selected.piece.available_moves, true, 2); // Allow selection only of valid moves on board 2
+                                }
                                 Game_Logic.board[board_number_clicked].board_cells[row][column].Click -= Board1PickOrDropPiece;
                                 old_row = cell_selected.piece.row; // Saving old coordonates 
-                                old_column = cell_selected.piece.column;                               
+                                old_column = cell_selected.piece.column;
                             }
                         }
                         else
@@ -118,13 +122,23 @@ namespace Parallel_Worlds
                             List<Tuple<int, int>> moved_piece_list = new List<Tuple<int, int>>();
                             Tuple<int, int> moved_piece_tuple = new Tuple<int, int>(row, column);
                             moved_piece_list.Add(moved_piece_tuple);
-                            game.MoveThePiece(board_number_clicked, old_row, old_column, row, column);
+                            if (board_number_clicked == 0)
+                            {
+                                game.MoveThePiece(1, 0, old_row, old_column, row, column);
+                            }
+                            if (board_number_clicked == 2)
+                            {
+                                game.MoveThePiece(1, 2, old_row, old_column, row, column);
+                            }
                             game.piece_clicked = false;
                             DeleteBorder();
-                            Click(cell_selected.piece.available_moves, false, 0);
-                            Click(cell_selected.piece.available_moves, false, 1);
-                            Click(cell_selected.piece.available_moves, false, 2);
-                            Click(moved_piece_list, false, board_number_clicked);
+                            if (cell_selected.piece != null)
+                            {
+                                _Click(cell_selected.piece.available_moves, false, board_number_clicked);
+                                //_Click(cell_selected.piece.available_moves, false, 1);
+                                //_Click(cell_selected.piece.available_moves, false, 2);
+                            }
+                            _Click(moved_piece_list, false, board_number_clicked);
                             game.number_of_moves++;
                             if (game.beginng_match)
                             {
@@ -133,11 +147,11 @@ namespace Parallel_Worlds
                                     Game_Logic.who_moves = Piece_Color.black;
                                     game.beginng_match = false;
                                 }
-                                else if(Game_Logic.who_moves == Piece_Color.black && game.number_of_moves == 3)
+                                else if (Game_Logic.who_moves == Piece_Color.black && game.number_of_moves == 3)
                                 {
                                     Game_Logic.who_moves = Piece_Color.white;
                                 }
-                                if(game.number_of_moves == 2)
+                                if (game.number_of_moves == 2)
                                 {
                                     game.number_of_moves = 0;
                                 }
@@ -148,27 +162,44 @@ namespace Parallel_Worlds
                                 {
                                     Game_Logic.who_moves = Piece_Color.black;
                                 }
-                                else if(Game_Logic.who_moves == Piece_Color.black && game.number_of_moves == 3)
+                                else if (Game_Logic.who_moves == Piece_Color.black && game.number_of_moves == 3)
                                 {
                                     Game_Logic.who_moves = Piece_Color.white;
                                 }
-                                if(game.number_of_moves == 3)
+                                if (game.number_of_moves == 3)
                                 {
                                     game.number_of_moves = 0;
-                                }
+                                }    
                             }
                             UpdateTurn();
-                            Click(game.GetPieceLocation(Game_Logic.who_moves, 0), true, 0);
-                            Click(game.GetPieceLocation(Game_Logic.who_moves, 1), true, 1);
-                            Click(game.GetPieceLocation(Game_Logic.who_moves, 2), true, 2);
+                            _Click(game.GetPieceLocation(Game_Logic.who_moves, board_number_clicked), true, board_number_clicked);
+                            //_Click(game.GetPieceLocation(Game_Logic.who_moves, 1), true, 1);
+                            //_Click(game.GetPieceLocation(Game_Logic.who_moves, 2), true, 2);
                             board_selected = false;
+                            game.CheckForChess(board_number_clicked);
+                            if (game.king_in_chess.Item1)
+                            {
+                                Game_Logic.board[board_number_clicked].board_cells[game.white_kings_position.Item1][game.white_kings_position.Item2].BorderStyle = BorderStyle.Fixed3D;
+                            }
+                            else
+                            {
+                                Game_Logic.board[board_number_clicked].board_cells[game.white_kings_position.Item1][game.white_kings_position.Item2].BorderStyle = BorderStyle.None;
+                            }
+                            if (game.king_in_chess.Item2)
+                            {
+                                Game_Logic.board[board_number_clicked].board_cells[game.black_kings_position.Item1][game.black_kings_position.Item2].BorderStyle = BorderStyle.Fixed3D;
+                            }
+                            else
+                            {
+                                Game_Logic.board[board_number_clicked].board_cells[game.black_kings_position.Item1][game.black_kings_position.Item2].BorderStyle = BorderStyle.None;
+                            }
                         }
                     }
                 }
             }
         }
 
-        private void Click(List<Tuple<int, int>> return_location, bool is_enabled, int board_number)
+        private void _Click(List<Tuple<int, int>> return_location, bool is_enabled, int board_number)
         {
             foreach (var item in return_location)
             {

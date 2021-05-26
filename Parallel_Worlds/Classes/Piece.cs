@@ -41,7 +41,7 @@ namespace Parallel_Worlds
             }
         }
 
-        public void ShowAvailableMoves(Chess_Board chess_board)
+        public void ShowAvailableMoves(Chess_Board chess_board, bool show_moves)
         {
             available_moves.Clear(); // Clearing list with available moves
             // Start of pawn moves
@@ -49,7 +49,7 @@ namespace Parallel_Worlds
             {
                 if (piece_color.Equals(Piece_Color.white)) // If its color is white
                 {
-                    if (!chess_board.board_cells[row - 1][column].IsPiece()) // If there is no piece in front 
+                    if (row-1 >=0 && !chess_board.board_cells[row - 1][column].IsPiece()) // If there is no piece in front 
                     {
                         available_moves.Add(new Tuple<int, int>(row - 1, column));
                     }
@@ -59,14 +59,14 @@ namespace Parallel_Worlds
                     }
                     if (column != 7 && chess_board.board_cells[row - 1][column + 1].IsPiece()) // If pawn can capture and is not on the right edge
                     {
-                        if (chess_board.board_cells[row - 1][column + 1].piece.piece_color != Game_Logic.who_moves) // If upper right square contains black piece
+                        if (chess_board.board_cells[row - 1][column + 1].piece.piece_color != piece_color) // If upper right square contains black piece
                         {
                             available_moves.Add(new Tuple<int, int>(row - 1, column + 1));
                         }
                     }
-                    if (column != 0 && chess_board.board_cells[row - 1][column - 1].IsPiece()) // If upper left square contains black piece
+                    if (row != 0 && column != 0 && chess_board.board_cells[row - 1][column - 1].IsPiece()) // If upper left square contains black piece
                     {
-                        if (chess_board.board_cells[row - 1][column - 1].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[row - 1][column - 1].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(row - 1, column - 1));
                         }
@@ -74,7 +74,7 @@ namespace Parallel_Worlds
                 }
                 else
                 {
-                    if (!chess_board.board_cells[row + 1][column].IsPiece())
+                    if (row + 1 < 8 && !chess_board.board_cells[row + 1][column].IsPiece())
                     {
                         available_moves.Add(new Tuple<int, int>(row + 1, column));
                     }
@@ -84,14 +84,14 @@ namespace Parallel_Worlds
                     }
                     if (column != 0 && chess_board.board_cells[row + 1][column - 1].IsPiece())
                     {
-                        if (chess_board.board_cells[row + 1][column - 1].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[row + 1][column - 1].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(row + 1, column - 1));
                         }
                     }
                     if (column != 7 && chess_board.board_cells[row + 1][column + 1].IsPiece())
                     {
-                        if (chess_board.board_cells[row + 1][column + 1].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[row + 1][column + 1].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(row + 1, column + 1));
                         }
@@ -115,7 +115,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if (chess_board.board_cells[temporary][column].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[temporary][column].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(temporary, column));
                         }
@@ -134,7 +134,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if (chess_board.board_cells[temporary][column].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[temporary][column].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(temporary, column));
                         }
@@ -153,7 +153,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if (chess_board.board_cells[row][temporary].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[row][temporary].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(row, temporary));
                         }
@@ -172,7 +172,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if (chess_board.board_cells[row][temporary].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[row][temporary].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(row, temporary));
                         }
@@ -199,7 +199,7 @@ namespace Parallel_Worlds
                         }
                         else
                         {
-                            if (chess_board.board_cells[new_row][new_column].piece.piece_color != Game_Logic.who_moves)
+                            if (chess_board.board_cells[new_row][new_column].piece.piece_color != piece_color)
                             {
                                 available_moves.Add(new Tuple<int, int>(new_row, new_column));
                             }
@@ -225,7 +225,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if (chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
                         }
@@ -246,7 +246,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if(chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        if(chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
                         }
@@ -267,7 +267,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if(chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        if(chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
                         }
@@ -288,7 +288,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if(chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        if(chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
                         }
@@ -314,7 +314,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if (chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
                         }
@@ -335,7 +335,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if (chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
                         }
@@ -356,7 +356,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if (chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
                         }
@@ -377,7 +377,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if (chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[temporary_row][temporary_column].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
                         }
@@ -396,7 +396,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if (chess_board.board_cells[temporary][column].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[temporary][column].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(temporary, column));
                         }
@@ -415,7 +415,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if (chess_board.board_cells[temporary][column].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[temporary][column].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(temporary, column));
                         }
@@ -434,7 +434,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if (chess_board.board_cells[row][temporary].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[row][temporary].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(row, temporary));
                         }
@@ -453,7 +453,7 @@ namespace Parallel_Worlds
                     }
                     else
                     {
-                        if (chess_board.board_cells[row][temporary].piece.piece_color != Game_Logic.who_moves)
+                        if (chess_board.board_cells[row][temporary].piece.piece_color != piece_color)
                         {
                             available_moves.Add(new Tuple<int, int>(row, temporary));
                         }
@@ -480,7 +480,7 @@ namespace Parallel_Worlds
                         }
                         else
                         {
-                            if (chess_board.board_cells[new_row][new_column].piece.piece_color != Game_Logic.who_moves)
+                            if (chess_board.board_cells[new_row][new_column].piece.piece_color != piece_color)
                             {
                                 available_moves.Add(new Tuple<int, int>(new_row, new_column));
                             }
@@ -488,9 +488,12 @@ namespace Parallel_Worlds
                     }
                 }
             }
-            foreach (var cell_on_board in available_moves)
+            if (show_moves)
             {
-                chess_board.board_cells[cell_on_board.Item1][cell_on_board.Item2].BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+                foreach (var cell_on_board in available_moves)
+                {
+                    chess_board.board_cells[cell_on_board.Item1][cell_on_board.Item2].BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+                }
             }
         }
     }
