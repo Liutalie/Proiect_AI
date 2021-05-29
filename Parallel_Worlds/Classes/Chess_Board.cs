@@ -32,7 +32,7 @@ namespace Parallel_Worlds
                         board_cells[row][column].Size = new Size(64, 64);
                         board_cells[row][column].Visible = true;
                         board_cells[row][column].BackColor = Color.Transparent;
-                        board_cells[row][column].piece = null;
+                        board_cells[row][column].piece = null; // Add null to all cells in board 1
                         chess_board.Controls.Add(board_cells[row][column]);
                     }
                 }
@@ -122,11 +122,11 @@ namespace Parallel_Worlds
                             board_cells[row][column].Image = Properties.Resources.King_white;
                             flag = false;
                         }
-                        if(flag)
+                        if(flag) // If position should not have a piece
                         {
-                            board_cells[row][column].piece = null;
+                            board_cells[row][column].piece = null; // Put null at the coordonates
                         }
-                        chess_board.Controls.Add(board_cells[row][column]);
+                        chess_board.Controls.Add(board_cells[row][column]); // Addding pieces on the table
                     }
                 }
             }

@@ -43,9 +43,10 @@ namespace Parallel_Worlds
 
         public void ShowAvailableMoves(Chess_Board chess_board, bool show_moves, int board_number)
         {
+            bool pawn_first_move = false; // Flag for pawns first move
             available_moves.Clear(); // Clearing list with available moves
             // Start of pawn moves
-            if (board_number == 0 || board_number == 2)
+            if (board_number == 0 || board_number == 2) // If piece is on board 0 or 2 it moves normally
             {
                 if (piece_type.Equals(Piece_Type.pawn)) // If piece is pawn
                 {
@@ -53,9 +54,10 @@ namespace Parallel_Worlds
                     {
                         if (row - 1 >= 0 && !chess_board.board_cells[row - 1][column].IsPiece()) // If there is no piece in front 
                         {
+                            pawn_first_move = true;
                             available_moves.Add(new Tuple<int, int>(row - 1, column));
                         }
-                        if (!moved_once && !chess_board.board_cells[row - 2][column].IsPiece()) // If pawn was not moved and second square is empty
+                        if (!moved_once && !chess_board.board_cells[row - 2][column].IsPiece() && pawn_first_move) // If pawn was not moved and second square is empty
                         {
                             available_moves.Add(new Tuple<int, int>(row - 2, column));
                         }
@@ -491,178 +493,139 @@ namespace Parallel_Worlds
                     }
                 }
             }
-            else
+            else // Piece is on board 1 it moves like a queen
             {
                 // South East moves
                 int temporary_row = row - 1;
                 int temporary_column = column + 1;
-                while (temporary_row >= 0 && temporary_column < 8)
+                while (temporary_row >= 0 && temporary_column < 8 && !chess_board.board_cells[temporary_row][temporary_column].IsPiece())
                 {
-                    if (!chess_board.board_cells[temporary_row][temporary_column].IsPiece())
-                    {
-                        available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
-                        temporary_row--;
-                        temporary_column++;
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                    temporary_row--;
+                    temporary_column++;
                 }
 
                 // South West moves
                 temporary_row = row - 1;
                 temporary_column = column - 1;
-                while (temporary_row >= 0 && temporary_column >= 0)
+                while (temporary_row >= 0 && temporary_column >= 0 && !chess_board.board_cells[temporary_row][temporary_column].IsPiece())
                 {
-                    if (!chess_board.board_cells[temporary_row][temporary_column].IsPiece())
-                    {
-                        available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
-                        temporary_row--;
-                        temporary_column--;
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                    temporary_row--;
+                    temporary_column--;
                 }
 
                 // North East moves
                 temporary_row = row + 1;
                 temporary_column = column + 1;
-                while (temporary_row < 8 && temporary_column < 8)
+                while (temporary_row < 8 && temporary_column < 8 && !chess_board.board_cells[temporary_row][temporary_column].IsPiece())
                 {
-                    if (!chess_board.board_cells[temporary_row][temporary_column].IsPiece())
-                    {
-                        available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
-                        temporary_row++;
-                        temporary_column++;
-                    }
-                    else
-                    {
-                        break;
-                    }
+
+                    available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                    temporary_row++;
+                    temporary_column++;
                 }
 
                 // North West moves
                 temporary_row = row + 1;
                 temporary_column = column - 1;
-                while (temporary_row < 8 && temporary_column >= 0)
+                while (temporary_row < 8 && temporary_column >= 0 && !chess_board.board_cells[temporary_row][temporary_column].IsPiece())
                 {
-                    if (!chess_board.board_cells[temporary_row][temporary_column].IsPiece())
-                    {
-                        available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
-                        temporary_row++;
-                        temporary_column--;
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    available_moves.Add(new Tuple<int, int>(temporary_row, temporary_column));
+                    temporary_row++;
+                    temporary_column--;
                 }
 
                 // South available moves
                 int temporary = row + 1;
-                while (temporary < 8)
+                while (temporary < 8 && !chess_board.board_cells[temporary][column].IsPiece())
                 {
-                    if (!chess_board.board_cells[temporary][column].IsPiece())
-                    {
-                        available_moves.Add(new Tuple<int, int>(temporary, column));
-                        temporary++;
-                    }
-                    else
-                    {
-                        break;
-                    }
+
+                    available_moves.Add(new Tuple<int, int>(temporary, column));
+                    temporary++;
                 }
 
                 // North available moves
                 temporary = row - 1;
-                while (temporary >= 0)
+                while (temporary >= 0 && !chess_board.board_cells[temporary][column].IsPiece())
                 {
-                    if (!chess_board.board_cells[temporary][column].IsPiece())
-                    {
-                        available_moves.Add(new Tuple<int, int>(temporary, column));
-                        temporary--;
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    available_moves.Add(new Tuple<int, int>(temporary, column));
+                    temporary--;
                 }
 
                 // East available moves
                 temporary = column + 1;
-                while (temporary < 8)
+                while (temporary < 8 && !chess_board.board_cells[row][temporary].IsPiece())
                 {
-                    if (!chess_board.board_cells[row][temporary].IsPiece())
-                    {
-                        available_moves.Add(new Tuple<int, int>(row, temporary));
-                        temporary++;
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    available_moves.Add(new Tuple<int, int>(row, temporary));
+                    temporary++;
                 }
 
                 // West available moves
                 temporary = column - 1;
-                while (temporary >= 0)
+                while (temporary >= 0 && !chess_board.board_cells[row][temporary].IsPiece())
                 {
-                    if (!chess_board.board_cells[row][temporary].IsPiece())
-                    {
-                        available_moves.Add(new Tuple<int, int>(row, temporary));
-                        temporary--;
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    available_moves.Add(new Tuple<int, int>(row, temporary));
+                    temporary--;
                 }
             }
-            if (show_moves)
+            if (show_moves) // If flag to highlight the moves is true
             {
-                if(board_number == 1)
+                if (board_number == 1) // If board is 1
                 {
                     ShowAvailableMoveTransfer();
                 }
-                foreach (var cell_on_board in available_moves)
+                if (board_number == 0 || board_number == 2) // If board is 0 or 2
+                {
+                    ShowAvailableMoveTransferBoard1();
+                }
+                foreach (var cell_on_board in available_moves) // Iterate through moves and highlight them
                 {
                     chess_board.board_cells[cell_on_board.Item1][cell_on_board.Item2].BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
                 }
             }
         }
 
+        public void ShowAvailableMoveTransferBoard1()
+        {
+            for (int index = 0; index < available_moves.Count; index++) // Iterate through available moves
+            {
+                if(Game_Logic.board[1].board_cells[available_moves[index].Item1][available_moves[index].Item2].IsPiece()) // If there is a piece on board 1 at legal move coord
+                {
+                    available_moves.RemoveAt(index); // Remove this legal move
+                }
+            } 
+        }
+
         public void ShowAvailableMoveTransfer()
         {
-            bool first_board = false;
-            bool second_board = false;
-            for(int index = 0; index < available_moves.Count; index++)
+            bool first_board = false; // Bool that indicates if the move is legal on board 0
+            bool second_board = false; // Bool that indicates if the move is legal on board 2
+            for (int index = 0; index < available_moves.Count; index++) // Iterate through available moves
             {
-                if(!Game_Logic.board[0].board_cells[available_moves[index].Item1][available_moves[index].Item2].IsPiece())
+                if (!Game_Logic.board[0].board_cells[available_moves[index].Item1][available_moves[index].Item2].IsPiece()) // If there is no piece on board 0
                 {
-                    first_board = true;
+                    first_board = true; // Move is legal
                 }
-                if (!Game_Logic.board[2].board_cells[available_moves[index].Item1][available_moves[index].Item2].IsPiece())
+                if (!Game_Logic.board[2].board_cells[available_moves[index].Item1][available_moves[index].Item2].IsPiece()) // If there is no piece on board 2
                 {
-                    second_board = true;
+                    second_board = true; // Move is legal
                 }
-                if(!first_board && !second_board)
+                if (!first_board && !second_board) // If move is illegal on board 0 and 2
                 {
-                    available_moves.RemoveAt(index);
+                    available_moves.RemoveAt(index); // Remove it from legal moves
                     index--;
                 }
-                if(first_board && !second_board)
+                if (first_board && !second_board) // If the move is legal on board 0
                 {
-                    Game_Logic.available_moves_board_0.Add(available_moves[index]);
+                    Game_Logic.available_moves_board_0.Add(available_moves[index]); // Add it in to its own Tuple
                 }
-                if (!first_board && second_board)
+                if (!first_board && second_board) // If the move is legal on board 2
                 {
-                    Game_Logic.available_moves_board_2.Add(available_moves[index]);
+                    Game_Logic.available_moves_board_2.Add(available_moves[index]); // Add it in to its own Tuple
                 }
                 first_board = false;
-                second_board = false;
+                second_board = false; // Reset the flag
             }
         }
     }

@@ -18,7 +18,7 @@ namespace Parallel_Worlds
             }
         }
         
-        public bool IsPiece()
+        public bool IsPiece() // Returns if there is a piece or not
         {
             if(piece != null)
             {
