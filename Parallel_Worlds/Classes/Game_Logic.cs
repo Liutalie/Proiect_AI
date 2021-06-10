@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Windows.Forms;
+using System.Threading;
 
 namespace Parallel_Worlds
 {
@@ -19,6 +22,10 @@ namespace Parallel_Worlds
         static public List<Tuple<int, int>> available_moves_stored;
         static public List<Tuple<int, int>> available_moves_board_0;
         static public List<Tuple<int, int>> available_moves_board_2;
+        public static Cell piece_selected;
+        int number_of_white_kings;
+        int number_of_black_kings;
+
         public Game_Logic()
         {
             board = new Chess_Board[3];
@@ -36,6 +43,8 @@ namespace Parallel_Worlds
             available_moves_stored = new List<Tuple<int, int>>();
             available_moves_board_0 = new List<Tuple<int, int>>();
             available_moves_board_2 = new List<Tuple<int, int>>();
+            number_of_black_kings = 0;
+            number_of_white_kings = 0;
         }
 
         public Piece MoveThePiece(int board_number, int former_board, int old_row, int old_column, int new_row, int new_column)
@@ -47,15 +56,17 @@ namespace Parallel_Worlds
                     board[former_board].board_cells[old_row][old_column].piece.moved_once = true; // Set flag that indicates that pawn moved once
                 }
             }
-            if (board[former_board].board_cells[old_row][old_column].piece.piece_type.Equals(Piece_Type.king) && board[former_board].board_cells[old_row][old_column].piece.piece_color
-                .Equals(Piece_Color.white)) // If white king moved, save his new coord
+            if(board[former_board].board_cells[old_row][old_column].piece.piece_type.Equals(Piece_Type.king))
             {
-                white_kings_position = new Tuple<int, int>(new_row, new_column);
-            }
-            if (board[former_board].board_cells[old_row][old_column].piece.piece_type.Equals(Piece_Type.king) && board[former_board].board_cells[old_row][old_column].piece.piece_color
-                .Equals(Piece_Color.black)) // If black king moved, save his new coord
-            {
-                black_kings_position = new Tuple<int, int>(new_row, new_column);
+                var piece_color = board[former_board].board_cells[old_row][old_column].piece.piece_color;
+                if(piece_color.Equals(Piece_Color.black))
+                {
+                    black_kings_position = new Tuple<int, int>(new_row, new_column);
+                }
+                else
+                {
+                    white_kings_position = new Tuple<int, int>(new_row, new_column);
+                }
             }
             if (!board[former_board].board_cells[old_row][old_column].piece.piece_type.Equals(Piece_Type.king)) // If the piece moved is not king, move it on the new borad
             {
@@ -114,8 +125,60 @@ namespace Parallel_Worlds
                     }
                 }
             }
-
+            CheckNumberOfKings();
             return null;
+        }
+
+        public void CheckNumberOfKings()
+        {
+            for(int row = 0; row < 8; row++)
+            {
+                for(int column = 0; column < 8; column++)
+                {
+                    if(board[0].board_cells[row][column].IsPiece())
+                    {
+                        if(board[0].board_cells[row][column].piece.piece_type.Equals(Piece_Type.king))
+                        {
+                            if(board[0].board_cells[row][column].piece.piece_color.Equals(Piece_Color.white))
+                            {
+                                number_of_white_kings++;
+                            }
+                            else
+                            {
+                                number_of_black_kings++;
+                            }
+                        }
+                    }
+                    if (board[2].board_cells[row][column].IsPiece())
+                    {
+                        if (board[2].board_cells[row][column].piece.piece_type.Equals(Piece_Type.king))
+                        {
+                            if (board[2].board_cells[row][column].piece.piece_color.Equals(Piece_Color.white))
+                            {
+                                number_of_white_kings++;
+                            }
+                            else
+                            {
+                                number_of_black_kings++;
+                            }
+                        }
+                    }
+                }
+            }
+            if (number_of_white_kings != 2)
+            {
+                MessageBox.Show("Black Won!", "Game Ended", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Thread.Sleep(2000);
+                Application.Exit();
+            }
+            if (number_of_black_kings != 2)
+            {
+                MessageBox.Show("White Won!", "Game Ended", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Thread.Sleep(2000);
+                Application.Exit();
+            }
+            number_of_white_kings = 0;
+            number_of_black_kings = 0;
         }
 
         public List<Tuple<int, int>> GetPieceLocation(Piece_Color color, int board_number) // Method that takes board number and color of the piece
@@ -137,12 +200,133 @@ namespace Parallel_Worlds
             return return_location; // Return pieces coordonates
         }
 
+        public void RandomAI()
+        {
+            List<int> choose_board = new List<int>();
+            choose_board.Add(1);
+            choose_board.Add(3);
+            var black_pieces_location_board0 = GetPieceLocation(Piece_Color.black, 0);
+            var black_pieces_location_board1 = GetPieceLocation(Piece_Color.black, 1);
+            var black_pieces_location_board2 = GetPieceLocation(Piece_Color.black, 2);
+            Tuple<int, int, int> temporary_list_attack;
+            Dictionary<Piece, List<Tuple<int,int, int>>> black_moves = new Dictionary<Piece, List<Tuple<int,int, int>>>();
+            Dictionary<Piece, Tuple<int,int, int>> attack_moves = new Dictionary<Piece, Tuple<int, int, int>>();
+            foreach(var piece in black_pieces_location_board0)
+            {
+                Game_Logic.board[0].board_cells[piece.Item1][piece.Item2].piece.ShowAvailableMoves(Game_Logic.board[0], false, 0);
+                if(Game_Logic.board[0].board_cells[piece.Item1][piece.Item2].piece.available_moves.Count!=0)
+                {
+                    List<Tuple<int, int, int>> temporary_list_moves = new List<Tuple<int, int, int>>();
+                    List<Tuple<int, int>> temporary = new List<Tuple<int, int>>();
+                    temporary.AddRange(Game_Logic.board[0].board_cells[piece.Item1][piece.Item2].piece.available_moves);
+                    foreach (var move in temporary)
+                    {
+                        temporary_list_moves.Add(Tuple.Create(0, move.Item1, move.Item2));
+                    }
+                    black_moves[Game_Logic.board[0].board_cells[piece.Item1][piece.Item2].piece] = temporary_list_moves;
+                    foreach (var move in Game_Logic.board[0].board_cells[piece.Item1][piece.Item2].piece.available_moves)
+                    {
+                        if (Game_Logic.board[0].board_cells[move.Item1][move.Item2].IsPiece())
+                        {
+                            temporary_list_attack = Tuple.Create(0, move.Item1, move.Item2);
+                            attack_moves[Game_Logic.board[0].board_cells[piece.Item1][piece.Item2].piece] = temporary_list_attack;
+                        }
+                    }
+                    
+                }
+                Game_Logic.board[0].board_cells[piece.Item1][piece.Item2].piece.available_moves.Clear();
+            }
+            foreach (var piece in black_pieces_location_board1)
+            {
+                Game_Logic.board[1].board_cells[piece.Item1][piece.Item2].piece.ShowAvailableMoves(Game_Logic.board[1], false, 1);
+                if (Game_Logic.board[1].board_cells[piece.Item1][piece.Item2].piece.available_moves.Count != 0)
+                {
+                    List<Tuple<int, int, int>> temporary_list_moves = new List<Tuple<int, int, int>>();
+                    List<Tuple<int, int>> temporary = new List<Tuple<int, int>>();
+                    temporary.AddRange(Game_Logic.board[1].board_cells[piece.Item1][piece.Item2].piece.available_moves);
+                    foreach (var move in temporary)
+                    {
+                        temporary_list_moves.Add(Tuple.Create(1, move.Item1, move.Item2));
+                    }
+                    black_moves[Game_Logic.board[1].board_cells[piece.Item1][piece.Item2].piece] = temporary_list_moves;
+                    foreach (var move in Game_Logic.board[1].board_cells[piece.Item1][piece.Item2].piece.available_moves)
+                    {
+                        if (Game_Logic.board[1].board_cells[move.Item1][move.Item2].IsPiece())
+                        {
+                            temporary_list_attack = Tuple.Create(1, move.Item1, move.Item2);
+                            attack_moves[Game_Logic.board[1].board_cells[piece.Item1][piece.Item2].piece] = temporary_list_attack;
+                        }
+                    }
+                }
+                Game_Logic.board[1].board_cells[piece.Item1][piece.Item2].piece.available_moves.Clear();
+            }
+            foreach (var piece in black_pieces_location_board2)
+            {
+                Game_Logic.board[2].board_cells[piece.Item1][piece.Item2].piece.ShowAvailableMoves(Game_Logic.board[2], false, 2);
+                if (Game_Logic.board[2].board_cells[piece.Item1][piece.Item2].piece.available_moves.Count != 0)
+                {
+                    List<Tuple<int, int, int>> temporary_list_moves = new List<Tuple<int, int, int>>();
+                    List<Tuple<int, int>> temporary = new List<Tuple<int, int>>();
+                    temporary.AddRange(Game_Logic.board[2].board_cells[piece.Item1][piece.Item2].piece.available_moves);
+                    foreach (var move in temporary)
+                    {
+                        temporary_list_moves.Add(Tuple.Create(2, move.Item1, move.Item2));
+                    }
+                    black_moves[Game_Logic.board[2].board_cells[piece.Item1][piece.Item2].piece] = temporary_list_moves;
+                    foreach (var move in Game_Logic.board[2].board_cells[piece.Item1][piece.Item2].piece.available_moves)
+                    {
+                        if (Game_Logic.board[2].board_cells[move.Item1][move.Item2].IsPiece())
+                        {
+                            temporary_list_attack = Tuple.Create(2, move.Item1, move.Item2);
+                            attack_moves[Game_Logic.board[2].board_cells[piece.Item1][piece.Item2].piece] = temporary_list_attack;
+                        }
+                    }
+                }
+                Game_Logic.board[2].board_cells[piece.Item1][piece.Item2].piece.available_moves.Clear();
+            }
+
+            Random random_move = new Random();
+            Piece key;
+            int index;
+            int old_row, old_column, old_board, new_index, new_row, new_column;
+            Tuple<int, int, int> new_coordonates;
+            if(attack_moves.Count != 0)
+            {
+                index = random_move.Next(attack_moves.Count);
+                key = attack_moves.Keys.ElementAt(index);
+                old_row = key.row;
+                old_column = key.column;
+                old_board = key.board;
+                new_coordonates = attack_moves[key];
+                new_row = new_coordonates.Item2;
+                new_column = new_coordonates.Item3;
+            }
+            else
+            {
+                index = random_move.Next(black_moves.Count);
+                key = black_moves.Keys.ElementAt(index);
+                new_index = random_move.Next(black_moves[key].Count);
+                old_row = key.row;
+                old_column = key.column;
+                old_board = key.board;
+                new_coordonates = black_moves[key][new_index];
+                new_row = new_coordonates.Item2;
+                new_column = new_coordonates.Item3;
+            }
+            if(old_board == 0 || old_board == 2)
+            {
+                MoveThePiece(1, old_board, old_row, old_column, new_row, new_column);
+            }
+            else
+            {
+                MoveThePiece(random_move.Next(choose_board.Count), old_board, old_row, old_column, new_row, new_column);
+            }
+        }
+
         public Tuple<bool, bool> CheckForChess(int board_number) // Method that cheks if king is in chess
         {
             bool king_in_chess_white = false; // Flag for white king
             bool king_in_chess_black = false; // Flag for black king
-            //bool king_in_mate_white = false;
-            //bool king_in_mate_black = false;
             for (int row = 0; row < 8; row++)
             {
                 for (int column = 0; column < 8; column++)

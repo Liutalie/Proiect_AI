@@ -185,7 +185,9 @@ namespace Parallel_Worlds
                 Game_Logic.board[board_number].board_cells[new_row][new_column].Image = Properties.Resources.Queen_black;
                 Game_Logic.board[board_number].chess_board.Controls.Add(Game_Logic.board[board_number].board_cells[new_row][new_column]);
             }
+            Game_Logic.board[board_number].board_cells[new_row][new_column].BorderStyle = BorderStyle.None;
             Close();
+            
         }
     }
 }

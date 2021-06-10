@@ -61,7 +61,7 @@ namespace Parallel_Worlds
                         {
                             available_moves.Add(new Tuple<int, int>(row - 2, column));
                         }
-                        if (column != 7 && chess_board.board_cells[row - 1][column + 1].IsPiece()) // If pawn can capture and is not on the right edge
+                        if (column != 7 && row != 0 && chess_board.board_cells[row - 1][column + 1].IsPiece()) // If pawn can capture and is not on the right edge
                         {
                             if (chess_board.board_cells[row - 1][column + 1].piece.piece_color != piece_color) // If upper right square contains black piece
                             {
